@@ -108,8 +108,15 @@ def create_filters(
     :param hazardous: Whether the NEO of a matching `CloseApproach` is potentially hazardous.
     :return: A collection of filters for use with `query`.
     """
-    # TODO: Decide how you will represent your filters.
-    return ()
+    # -TODO: Decide how you will represent your filters.
+    # I've chose this format in order to comply with NEODatabase.query
+    return (
+        date, start_date, end_date,
+        distance_min, distance_max,
+        velocity_min, velocity_max,
+        diameter_min, diameter_max,
+        hazardous
+    )
 
 
 def limit(iterator, n=None):
@@ -121,5 +128,11 @@ def limit(iterator, n=None):
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
-    # TODO: Produce at most `n` values from the given iterator.
-    return iterator
+    # -TODO: Produce at most `n` values from the given iterator.
+    for number in iterator:
+        if n is None or n == 0:
+            yield number
+            continue
+
+        if number < n:
+            yield number

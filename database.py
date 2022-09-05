@@ -44,7 +44,12 @@ class NEODatabase:
 
         # TODO: What additional auxiliary data structures will be useful?
 
-        # TODO: Link together the NEOs and their close approaches.
+        # -TODO: Link together the NEOs and their close approaches.
+        for neo in neos:
+            for approach in approaches:
+                if neo.designation == approach._designation:
+                    neo.approaches.append(approach)
+                    approach.neo = neo
 
     def get_neo_by_designation(self, designation):
         """Find and return an NEO by its primary designation.
@@ -59,7 +64,10 @@ class NEODatabase:
         :param designation: The primary designation of the NEO to search for.
         :return: The `NearEarthObject` with the desired primary designation, or `None`.
         """
-        # TODO: Fetch an NEO by its primary designation.
+        # -TODO: Fetch an NEO by its primary designation.
+        for neo in self._neos:
+            if neo.designation == designation:
+                return neo
         return None
 
     def get_neo_by_name(self, name):
@@ -76,7 +84,10 @@ class NEODatabase:
         :param name: The name, as a string, of the NEO to search for.
         :return: The `NearEarthObject` with the desired name, or `None`.
         """
-        # TODO: Fetch an NEO by its name.
+        # -TODO: Fetch an NEO by its name.
+        for neo in self._neos:
+            if neo.name == name:
+                return neo
         return None
 
     def query(self, filters=()):
@@ -93,6 +104,54 @@ class NEODatabase:
         :param filters: A collection of filters capturing user-specified criteria.
         :return: A stream of matching `CloseApproach` objects.
         """
-        # TODO: Generate `CloseApproach` objects that match all of the filters.
+        # -TODO: Generate `CloseApproach` objects that match all of the filters.
+        # Filters sequence:
+        # date, start_date, end_date,
+        # distance_min, distance_max,
+        # velocity_min, velocity_max,
+        # diameter_min, diameter_max,
+        # hazardous
         for approach in self._approaches:
+            if filters[0] is not None\
+                    and filters[1] is not None\
+                    and filters[2] is not None\
+                    and filters[3] is not None\
+                    and filters[4] is not None\
+                    and filters[5] is not None\
+                    and filters[6] is not None\
+                    and filters[7] is not None\
+                    and filters[8] is not None\
+                    and filters[9] is not None:
+                yield approach
+
+            if filters[0] is not None and not filters[0] == approach.time.date():
+                continue
+
+            if filters[1] is not None and not filters[1] <= approach.time.date():
+                continue
+
+            if filters[2] is not None and not filters[2] >= approach.time.date():
+                continue
+
+            if filters[3] is not None and not filters[3] <= approach.distance:
+                continue
+
+            if filters[4] is not None and not filters[4] >= approach.distance:
+                continue
+
+            if filters[5] is not None and not filters[5] <= approach.velocity:
+                continue
+
+            if filters[6] is not None and not filters[6] >= approach.velocity:
+                continue
+
+            if filters[7] is not None and not filters[7] <= approach.neo.diameter:
+                continue
+
+            if filters[8] is not None and not filters[8] >= approach.neo.diameter:
+                continue
+
+            if filters[9] is not None and not filters[9] == approach.neo.hazardous:
+                continue
+
             yield approach
